@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Blog - Gestion d'articles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            padding: 2rem 1rem;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem 0;
+            color: #0f172a;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        .form-card {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.6rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        button.secondary {
+            background: #64748b;
+        }
+        button.secondary:hover {
+            background: #475569;
+        }
+        button.danger {
+            background: #ef4444;
+        }
+        button.danger:hover {
+            background: #dc2626;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .search-bar input {
+            flex: 1;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .article-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px -10px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .card-meta {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.3rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .card-body p {
+            color: #334155;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        .tag {
+            background: #e2e8f0;
+            color: #1e293b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.8rem 1rem;
+            background: #fafcff;
+        }
+        .card-actions button {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #64748b;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-blog"></i> Mon Blog</h1>
+
+    <!-- Formulaire d'ajout -->
+    <div class="form-card">
+        <h2><i class="fas fa-plus-circle"></i> Ajouter un article</h2>
+        <form id="articleForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Titre *</label>
+                    <input type="text" id="titre" required>
+                </div>
+                <div class="form-group">
+                    <label>Auteur *</label>
+                    <input type="text" id="auteur" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Catégorie</label>
+                    <input type="text" id="categorie" placeholder="Ex: Technologie">
+                </div>
+                <div class="form-group">
+                    <label>Tags (séparés par des virgules)</label>
+                    <input type="text" id="tags" placeholder="api, nodejs, blog">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Contenu *</label>
+                <textarea id="contenu" rows="4" required></textarea>
+            </div>
+            <button type="submit"><i class="fas fa-save"></i> Créer l'article</button>
+        </form>
+    </div>
+
+    <!-- Recherche -->
+    <h2><i class="fas fa-search"></i> Rechercher</h2>
+    <div class="search-bar">
+        <input type="text" id="searchQuery" placeholder="Rechercher dans le titre ou le contenu...">
+        <button id="searchBtn"><i class="fas fa-search"></i> Rechercher</button>
+        <button id="resetBtn" class="secondary"><i class="fas fa-undo-alt"></i> Afficher tous</button>
+    </div>
+
+    <h2><i class="fas fa-newspaper"></i> Articles récents</h2>
+    <div id="articlesList" class="articles-grid"></div>
+    <footer>Utilisez les boutons pour gérer vos articles</footer>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api/articles';
+
+    async function fetchArticles(url = API_URL) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Erreur réseau');
+            const articles = await response.json();
+            displayArticles(articles);
+        } catch (error) {
+            console.error('Erreur:', error);
+            document.getElementById('articlesList').innerHTML = '<div class="empty-message">Erreur de chargement des articles. Vérifiez que le serveur est lancé.</div>';
+        }
+    }
+
+    function displayArticles(articles) {
+        const container = document.getElementById('articlesList');
+        if (!articles || articles.length === 0) {
+            container.innerHTML = '<div class="empty-message">Aucun article trouvé.</div>';
+            return;
+        }
+        container.innerHTML = articles.map(article => {
+            let tagsArray = [];
+            try {
+                tagsArray = article.tags ? JSON.parse(article.tags) : [];
+            } catch(e) { tagsArray = []; }
+            const tagsHtml = tagsArray.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+            const categoryHtml = article.categorie ? `<span class="category-badge">${escapeHtml(article.categorie)}</span>` : '';
+            return `
+                <div class="article-card" data-id="${article.id}">
+                    <div class="card-header">
+                        <h3>${escapeHtml(article.titre)}</h3>
+                        <div class="card-meta">
+                            <span><i class="fas fa-user"></i> ${escapeHtml(article.auteur)}</span>
+                            <span><i class="fas fa-calendar-alt"></i> ${article.date}</span>
+                            ${categoryHtml}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>${escapeHtml(article.contenu)}</p>
+                        ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="secondary" onclick="editArticle(${article.id})"><i class="fas fa-edit"></i> Modifier</button>
+                        <button class="danger" onclick="deleteArticle(${article.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Créer article
+    document.getElementById('articleForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const titre = document.getElementById('titre').value;
+        const contenu = document.getElementById('contenu').value;
+        const auteur = document.getElementById('auteur').value;
+        const categorie = document.getElementById('categorie').value;
+        const tagsInput = document.getElementById('tags').value;
+        const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
+
+        const article = { titre, contenu, auteur, categorie, tags };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(article)
+            });
+            if (!response.ok) throw new Error('Erreur création');
+            const data = await response.json();
+            alert(`Article créé avec l'ID ${data.id}`);
+            document.getElementById('articleForm').reset();
+            fetchArticles();
+        } catch (error) {
+            console.error(error);
+            alert('Erreur lors de la création');
+        }
+    });
+
+    // Supprimer
+    window.deleteArticle = async (id) => {
+        if (!confirm('Supprimer cet article ?')) return;
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Erreur suppression');
+            alert('Article supprimé');
+            fetchArticles();
+        } catch (error) {
+            console.error(error);
+            alert('Erreur lors de la suppression');
+        }
+    };
+
+    // Modifier
+    window.editArticle = async (id) => {
+        const newTitre = prompt('Nouveau titre :');
+        const newContenu = prompt('Nouveau contenu :');
+        const newCategorie = prompt('Nouvelle catégorie :');
+        const newTags = prompt('Nouveaux tags (séparés par des virgules) :');
+        const updates = {};
+        if (newTitre !== null) updates.titre = newTitre;
+        if (newContenu !== null) updates.contenu = newContenu;
+        if (newCategorie !== null) updates.categorie = newCategorie;
+        if (newTags !== null) updates.tags = newTags.split(',').map(t => t.trim());
+
+        if (Object.keys(updates).length === 0) return;
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updates)
+            });
+            if (!response.ok) throw new Error('Erreur mise à jour');
+            alert('Article modifié');
+            fetchArticles();
+        } catch (error) {
+            console.error(error);
+            alert('Erreur lors de la modification');
+        }
+    };
+
+    // Recherche
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const query = document.getElementById('searchQuery').value;
+        if (query.trim() === '') {
+            fetchArticles();
+        } else {
+            fetchArticles(`${API_URL}/search?query=${encodeURIComponent(query)}`);
+        }
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        document.getElementById('searchQuery').value = '';
+        fetchArticles();
+    });
+
+    // Charger au démarrage
+    fetchArticles();
+</script>
+</body>
+</html>
